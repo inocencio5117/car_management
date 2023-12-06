@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 import * as bcrypt from 'bcrypt';
+import { Role } from '@prisma/client';
 
 export const roundsOfHashing = 10;
 
@@ -18,8 +19,14 @@ export class UserService {
     );
 
     createUserDto.password = hashedPassword;
+    createUserDto.role = Role.CUSTOMER;
 
-    return await this.db.user.create({ data: createUserDto });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...newUser } = await this.db.user.create({
+      data: createUserDto,
+    });
+
+    return newUser;
   }
 
   async findAll() {
@@ -38,14 +45,15 @@ export class UserService {
       );
     }
 
-    const carExists = await this.db.user.findUnique({
+    const userExists = await this.db.user.findUnique({
       where: {
         id,
       },
     });
 
-    if (!carExists) throw new NotFoundException('User does not exists');
+    if (!userExists) throw new NotFoundException('User does not exists');
 
+    updateUserDto.role = updateUserDto.role;
     return await this.db.user.update({
       where: {
         id,

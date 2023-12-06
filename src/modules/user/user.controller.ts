@@ -29,33 +29,34 @@ export class UserController {
   }
 
   @Get()
-  @Role(RoleType.ADMIN)
-  @UseGuards(AuthenticationGuard, AuthenticationGuard)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
+  @Role(RoleType.ADMIN)
   async findAll() {
     return await this.usersService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthorizationGuard)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
-  async findOne(@Param() id: string) {
+  @Role(RoleType.ADMIN)
+  async findOne(@Param('id') id: string) {
     return await this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  @Role(RoleType.ADMIN)
-  @UseGuards(AuthorizationGuard)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
-  async update(@Param() id: string, @Body() updateUserDto: UpdateUserDto) {
+  @Role(RoleType.ADMIN)
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @Role(RoleType.ADMIN)
-  @UseGuards(AuthorizationGuard)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
-  async remove(@Param() id: string) {
+  @Role(RoleType.ADMIN)
+  async remove(@Param('id') id: string) {
     return await this.usersService.remove(id);
   }
 }

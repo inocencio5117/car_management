@@ -27,18 +27,11 @@ export class AuthController {
     return this.authService.login(email, password);
   }
 
-  @UseGuards(AuthenticationGuard)
-  @ApiBearerAuth()
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @Role(RoleType.ADMIN)
-  @Get('check')
-  check() {
-    return 'route was checked';
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 }
