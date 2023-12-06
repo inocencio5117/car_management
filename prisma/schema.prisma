@@ -27,3 +27,20 @@ enum Status {
   AVAILABLE
   SOLD
 }
+
+model User {
+  id String @id @default(uuid())
+  username String @db.VarChar(50)
+  email String @db.VarChar(50)  @unique
+  password String
+  role Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
