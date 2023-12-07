@@ -46,24 +46,6 @@ const carsList: CarEntity[] = [
     createdAt: new Date('2021-01-01T11:00:00.000Z'),
     updatedAt: new Date('2021-01-01T11:00:00.000Z'),
   },
-  {
-    id: 3,
-    model: 'Fiat Uno Mille',
-    year: 1988,
-    price: 11999 as unknown as Decimal,
-    status: 'AVAILABLE',
-    createdAt: new Date('2021-01-01T11:00:00.000Z'),
-    updatedAt: new Date('2021-01-01T11:00:00.000Z'),
-  },
-  {
-    id: 4,
-    model: 'Toyota Corolla',
-    year: 2023,
-    price: 146989 as unknown as Decimal,
-    status: 'SOLD',
-    createdAt: new Date('2021-01-01T11:00:00.000Z'),
-    updatedAt: new Date('2021-01-01T11:00:00.000Z'),
-  },
 ];
 
 const updatedItem = { ...carsList[1], year: 2000 };
