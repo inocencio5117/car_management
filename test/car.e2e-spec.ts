@@ -98,7 +98,6 @@ describe('CarController (Integration)', () => {
       .set('Authorization', `Bearer ${loginResponse.body.access_token}`)
       .expect(200);
 
-    // Check if the car is no longer available after deletion
     await request(app.getHttpServer()).get(`/car/${createdCarId}`).expect(404);
   });
 });
