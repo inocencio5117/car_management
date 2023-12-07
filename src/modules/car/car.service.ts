@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class CarService {
@@ -16,11 +16,15 @@ export class CarService {
   }
 
   async findOne(id: number) {
-    return await this.db.car.findFirstOrThrow({
+    const car = await this.db.car.findFirst({
       where: {
         id,
       },
     });
+
+    if (!car) throw new NotFoundException(`No car found for id ${id}`);
+
+    return car;
   }
 
   async update(id: number, updateCarDto: UpdateCarDto) {

@@ -64,7 +64,7 @@ describe('CarService', () => {
             car: {
               create: jest.fn().mockResolvedValue(createCarDto[0]),
               findMany: jest.fn().mockResolvedValue(createCarDto),
-              findFirstOrThrow: jest.fn().mockResolvedValue(carsList[0]),
+              findFirst: jest.fn().mockResolvedValue(carsList[0]),
               update: jest.fn().mockResolvedValue(updatedItem),
               delete: jest.fn().mockResolvedValue(carsList[1]),
               findUnique: jest.fn().mockResolvedValue(carsList[1]),
@@ -113,12 +113,12 @@ describe('CarService', () => {
       const result = await service.findOne(1);
 
       expect(result).toEqual(carsList[0]);
-      expect(prisma.car.findFirstOrThrow).toHaveBeenCalledTimes(1);
+      expect(prisma.car.findFirst).toHaveBeenCalledTimes(1);
     });
 
     it('should raise an exception if fail to find the car', async () => {
       jest
-        .spyOn(prisma.car, 'findFirstOrThrow')
+        .spyOn(prisma.car, 'findFirst')
         .mockRejectedValue(new NotFoundException());
 
       expect(service.findOne(99)).rejects.toThrow(NotFoundException);

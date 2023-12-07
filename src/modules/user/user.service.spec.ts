@@ -46,7 +46,7 @@ describe('UserService', () => {
             user: {
               create: jest.fn().mockResolvedValue(userList[0]),
               findMany: jest.fn().mockResolvedValue(userList),
-              findFirstOrThrow: jest.fn().mockResolvedValue(userList[0]),
+              findFirst: jest.fn().mockResolvedValue(userList[0]),
               update: jest.fn().mockResolvedValue(updatedItem),
               delete: jest.fn().mockResolvedValue(userList[0]),
               findUnique: jest.fn().mockResolvedValue(userList[0]),
@@ -100,7 +100,7 @@ describe('UserService', () => {
       const result = await service.findByEmail(userList[0].email);
 
       expect(result).toEqual(userList[0]);
-      expect(prisma.user.findFirstOrThrow).toHaveBeenCalledTimes(1);
+      expect(prisma.user.findFirst).toHaveBeenCalledTimes(1);
     });
 
     it('should raise an exception', async () => {
@@ -117,7 +117,7 @@ describe('UserService', () => {
       const result = await service.findById(userList[0].id);
 
       expect(result).toEqual(userList[0]);
-      expect(prisma.user.findFirstOrThrow).toHaveBeenCalledTimes(1);
+      expect(prisma.user.findFirst).toHaveBeenCalledTimes(1);
     });
 
     it('should raise an exception', async () => {
