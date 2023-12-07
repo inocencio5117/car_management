@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -16,7 +16,7 @@ export class CarService {
   }
 
   async findOne(id: number) {
-    return await this.db.car.findFirst({
+    return await this.db.car.findFirstOrThrow({
       where: {
         id,
       },
@@ -30,7 +30,7 @@ export class CarService {
       },
     });
 
-    if (!carExists) throw new Error('Car does not exists');
+    if (!carExists) throw new NotFoundException('Car does not exists');
 
     return await this.db.car.update({
       where: {
@@ -47,7 +47,7 @@ export class CarService {
       },
     });
 
-    if (!carExists) throw new Error('Car does not exists');
+    if (!carExists) throw new NotFoundException('Car does not exists');
 
     return await this.db.car.delete({
       where: {
