@@ -33,8 +33,12 @@ export class UserService {
     return await this.db.user.findMany();
   }
 
-  async findOne(email: string) {
-    return this.db.user.findFirst({ where: { email } });
+  async findByEmail(email: string) {
+    return this.db.user.findFirstOrThrow({ where: { email } });
+  }
+
+  async findById(id: string) {
+    return this.db.user.findFirstOrThrow({ where: { id } });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

@@ -36,12 +36,20 @@ export class UserController {
     return await this.usersService.findAll();
   }
 
+  @Get(':email')
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  @ApiBearerAuth()
+  @Role(RoleType.ADMIN)
+  async findByEmail(@Param('email') email: string) {
+    return await this.usersService.findByEmail(email);
+  }
+
   @Get(':id')
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @ApiBearerAuth()
   @Role(RoleType.ADMIN)
-  async findOne(@Param('id') id: string) {
-    return await this.usersService.findOne(id);
+  async findById(@Param('id') id: string) {
+    return await this.usersService.findById(id);
   }
 
   @Patch(':id')
