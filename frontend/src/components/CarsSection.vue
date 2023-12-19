@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, computed, ref } from 'vue';
+import { onBeforeUnmount, computed, ref, onMounted, watch } from 'vue';
 import { useQuery } from 'vue-query';
 import axios from 'axios';
 import emitter from '../plugins/emitter';
@@ -32,10 +32,12 @@ onBeforeUnmount(() => {
 
 const searchValue = ref<string>('');
 const fetchKey = ref<number>(0);
-emitter.on('search', (e) => {
-    searchValue.value = e
-    fetchKey.value++
-    console.log('search received')
+
+onMounted(() => {
+    emitter.on('search', (e) => {
+        searchValue.value = e
+        fetchKey.value++
+    })
 })
 
 type Car = {
@@ -53,10 +55,13 @@ const carsFetch = async (): Promise<Car[]> => {
     return (await axios.get('http://localhost:3000/car')).data
 }
 
-const { data } = useQuery('car', carsFetch);
+const { data, refetch } = useQuery('car', carsFetch);
+
+watch(searchValue, () => {
+    refetch.value();
+}, { immediate: true });
 
 const cars = computed(() => {
-    console.log(Array.isArray(data))
     return Array.isArray(data.value) ? data.value : [data.value]
 })
 

@@ -31,7 +31,6 @@ const searchValue = ref<string>('');
 
 const handleSearch = (value: string) => {
     emitter.emit('search', value)
-    console.log('search emitted', value)
 }
 </script>
 
