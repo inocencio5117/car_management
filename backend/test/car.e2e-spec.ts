@@ -76,13 +76,24 @@ describe('CarController (Integration)', () => {
     expect(updatedCar.model).toEqual(updateCarDto.model);
   });
 
-  it('/car/:id (GET) - should get a specific car', async () => {
+  it('/car/id/:id (GET) - should get a specific car by id', async () => {
     const response = await request(app.getHttpServer())
-      .get(`/car/${createdCarId}`)
+      .get(`/car/id/${createdCarId}`)
       .expect(200);
 
     const retrievedCar = response.body;
     expect(retrievedCar.id).toEqual(createdCarId);
+  });
+
+  it('/car/model/:model (GET) - should get a specific model (or models) of car', async () => {
+    const response = await request(app.getHttpServer())
+      .get(`/car/model/Updated Model`)
+      .expect(200);
+
+    const retrievedCars = response.body;
+    retrievedCars.forEach((car: { model: any }) => {
+      expect(car.model).toEqual('Updated Model');
+    });
   });
 
   it('/car/:id (DELETE) - should delete a car', async () => {

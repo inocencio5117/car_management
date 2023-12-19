@@ -15,16 +15,23 @@ export class CarService {
     return await this.db.car.findMany();
   }
 
-  async findOne(id: number) {
-    const car = await this.db.car.findFirst({
+  async findById(id: number) {
+    return await this.db.car.findFirst({
       where: {
         id,
       },
     });
+  }
 
-    if (!car) throw new NotFoundException(`No car found for id ${id}`);
-
-    return car;
+  async findByModel(model: string) {
+    return await this.db.car.findMany({
+      where: {
+        model: {
+          contains: model,
+          mode: 'insensitive',
+        },
+      },
+    });
   }
 
   async update(id: number, updateCarDto: UpdateCarDto) {

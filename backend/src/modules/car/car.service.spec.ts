@@ -46,6 +46,15 @@ const carsList: CarEntity[] = [
     createdAt: new Date('2021-01-01T11:00:00.000Z'),
     updatedAt: new Date('2021-01-01T11:00:00.000Z'),
   },
+  {
+    id: 3,
+    model: 'Fiat Uno Mille',
+    year: 1988,
+    price: 11999 as unknown as Decimal,
+    status: 'AVAILABLE',
+    createdAt: new Date('2021-01-01T11:00:00.000Z'),
+    updatedAt: new Date('2021-01-01T11:00:00.000Z'),
+  },
 ];
 
 const updatedItem = { ...carsList[1], year: 2000 };
@@ -63,7 +72,18 @@ describe('CarService', () => {
           useValue: {
             car: {
               create: jest.fn().mockResolvedValue(createCarDto[0]),
-              findMany: jest.fn().mockResolvedValue(createCarDto),
+              findMany: jest.fn((params) => {
+                if (params?.where?.model?.contains) {
+                  return Promise.resolve(
+                    carsList.filter((car) =>
+                      car.model
+                        .toLowerCase()
+                        .includes(params.where.model.contains.toLowerCase()),
+                    ),
+                  );
+                }
+                return Promise.resolve(carsList);
+              }),
               findFirst: jest.fn().mockResolvedValue(carsList[0]),
               update: jest.fn().mockResolvedValue(updatedItem),
               delete: jest.fn().mockResolvedValue(carsList[1]),
@@ -103,14 +123,14 @@ describe('CarService', () => {
     it('should return an array of cars', async () => {
       const result = await service.findAll();
 
-      expect(result).toEqual(createCarDto);
+      expect(result).toEqual(carsList);
       expect(prisma.car.findMany).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('findOne', () => {
+  describe('findById', () => {
     it('should return a specific car', async () => {
-      const result = await service.findOne(1);
+      const result = await service.findById(1);
 
       expect(result).toEqual(carsList[0]);
       expect(prisma.car.findFirst).toHaveBeenCalledTimes(1);
@@ -121,15 +141,41 @@ describe('CarService', () => {
         .spyOn(prisma.car, 'findFirst')
         .mockRejectedValue(new NotFoundException());
 
-      expect(service.findOne(99)).rejects.toThrow(NotFoundException);
+      expect(service.findById(99)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findByModel', () => {
+    it('should return an array of cars', async () => {
+      const model = 'Fiat';
+      const expected = carsList.filter((car) =>
+        car.model.toLowerCase().includes(model.toLowerCase()),
+      );
+      const result = await service.findByModel(model);
+
+      expect(result).toEqual(expected);
+      expect(prisma.car.findMany).toHaveBeenCalledWith({
+        where: {
+          model: {
+            contains: model,
+            mode: 'insensitive',
+          },
+        },
+      });
+    });
+
+    it('should raise an exception if fail to find the car', async () => {
+      jest
+        .spyOn(prisma.car, 'findMany')
+        .mockRejectedValue(new NotFoundException());
+
+      expect(service.findByModel('Fiat')).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('update', () => {
     it('should update an item successfully', async () => {
       const result = await service.update(2, { year: 2000 });
-
-      console.log('result', result);
 
       jest.spyOn(prisma.car, 'update').mockRejectedValueOnce(updatedItem);
 

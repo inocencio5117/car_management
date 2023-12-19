@@ -35,9 +35,14 @@ export class CarController {
     return this.carService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.carService.findOne(+id);
+  @Get('id/:id')
+  findById(@Param('id') id: string) {
+    return this.carService.findById(+id);
+  }
+
+  @Get('model/:model')
+  findByModel(@Param('model') model: string) {
+    return this.carService.findByModel(model);
   }
 
   @Patch(':id')

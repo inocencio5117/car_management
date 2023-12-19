@@ -77,7 +77,10 @@ describe('CarController', () => {
           useValue: {
             create: jest.fn().mockResolvedValue(carsList[1]),
             findAll: jest.fn().mockResolvedValue(carsList),
-            findOne: jest.fn().mockResolvedValue(carsList[1]),
+            findById: jest.fn().mockResolvedValue(carsList[1]),
+            findByModel: jest
+              .fn()
+              .mockResolvedValue([carsList[1], carsList[2]]),
             update: jest.fn().mockResolvedValue(updatedItem),
             remove: jest.fn().mockResolvedValue(carsList[1]),
           },
@@ -123,21 +126,41 @@ describe('CarController', () => {
     });
   });
 
-  describe('findOne', () => {
+  describe('findById', () => {
     it('should return a specific item', async () => {
-      const result = await controller.findOne('2');
+      const result = await controller.findById('2');
 
       expect(result).toEqual(carsList[1]);
       expect(typeof result).toEqual('object');
-      expect(service.findOne).toHaveBeenCalledTimes(1);
+      expect(service.findById).toHaveBeenCalledTimes(1);
     });
 
     it('should raise an exception', async () => {
       jest
-        .spyOn(controller, 'findOne')
+        .spyOn(controller, 'findById')
         .mockRejectedValueOnce(new BadRequestException());
 
-      expect(controller.findOne('2')).rejects.toThrow(BadRequestException);
+      expect(controller.findById('2')).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('findByModel', () => {
+    it('should return an array of items', async () => {
+      const result = await controller.findByModel('Fiat');
+
+      expect(result).toEqual([carsList[1], carsList[2]]);
+      expect(typeof result).toEqual('object');
+      expect(service.findByModel).toHaveBeenCalledTimes(1);
+    });
+
+    it('should raise an exception', async () => {
+      jest
+        .spyOn(controller, 'findByModel')
+        .mockRejectedValueOnce(new BadRequestException());
+
+      expect(controller.findByModel('Fiat')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
